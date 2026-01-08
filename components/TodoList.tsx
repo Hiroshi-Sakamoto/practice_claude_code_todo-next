@@ -19,7 +19,7 @@ export default function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [inputValue, setInputValue] = useState('')
   const [dueDateValue, setDueDateValue] = useState(getDefaultDueDate())
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | 'none'>('none')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [showCompleted, setShowCompleted] = useState(true)
 
   const addTodo = () => {
@@ -57,13 +57,7 @@ export default function TodoList() {
   }
 
   const toggleSortOrder = () => {
-    if (sortOrder === 'none') {
-      setSortOrder('asc')
-    } else if (sortOrder === 'asc') {
-      setSortOrder('desc')
-    } else {
-      setSortOrder('none')
-    }
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
   }
 
   const getSortedTodos = () => {
@@ -71,10 +65,6 @@ export default function TodoList() {
 
     if (!showCompleted) {
       filteredTodos = todos.filter((todo) => !todo.completed)
-    }
-
-    if (sortOrder === 'none') {
-      return filteredTodos
     }
 
     return [...filteredTodos].sort((a, b) => {
@@ -138,7 +128,7 @@ export default function TodoList() {
               onClick={toggleSortOrder}
               className="px-4 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
             >
-              期限順: {sortOrder === 'asc' ? '昇順 ↑' : sortOrder === 'desc' ? '降順 ↓' : 'なし'}
+              期限順: {sortOrder === 'asc' ? '昇順 ↑' : '降順 ↓'}
             </button>
           </div>
         </div>
