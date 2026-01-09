@@ -80,12 +80,12 @@ npm run test       # 上記が未定義の場合の代替
 
 ```ts
 interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-  dueDate: string;
+  id: number
+  text: string
+  completed: boolean
+  dueDate: string
 }
-```
+
 
 ---
 
