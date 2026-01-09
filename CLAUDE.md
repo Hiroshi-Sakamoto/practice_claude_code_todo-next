@@ -1,66 +1,139 @@
-# CLAUDE.md
+# CLAUDE.md（プロジェクト固有ルール）
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+project: practice_claude_code_todo-next
 
-## コマンド
+---
+
+## 0. 前提
+
+- 本プロジェクトは **共通ルール `~/.claude/CLAUDE.me` を必ず継承** する
+- ここに記載の内容は、本プロジェクトにおける **上書き・補足ルール** とする
+- コマンドはすべて **提示のみ**。実行はユーザーが行う
+
+---
+
+## 1. 作業環境
+
+- 環境：WSL2 / Ubuntu 24.04（ローカル）
+- 作業ディレクトリ：
+  `/home/makuroboy/projects/practice_claude_code_todo-next`
+- Node.js / npm は **ローカル環境に既存インストール済みのものを使用**
+- 依存追加（`npm install`）は **事前承認必須**
+
+---
+
+## 2. コマンド（本プロジェクト標準）
 
 ```bash
 # 開発
-npm run dev        # 開発サーバーを起動 (http://localhost:3000)
+npm run dev        # 開発サーバー起動 (http://localhost:3000)
 
-# 本番環境
-npm run build      # 本番用ビルドを作成
-npm run start      # 本番サーバーを起動
+# 本番相当確認
+npm run build      # 本番用ビルド作成
+npm run start      # 本番サーバー起動
 
 # コード品質
-npm run lint       # ESLintを実行
+npm run lint       # ESLint 実行
+
+# テスト
+npm test           # テスト実行（定義されている場合）
+npm run test       # 上記が未定義の場合の代替
 ```
 
-## アーキテクチャ
+---
 
-TypeScriptとTailwind CSSで書かれたNext.js 14 App Routerアプリケーションです。
+## 3. アーキテクチャ概要
 
-### プロジェクト構造
+- フレームワーク：Next.js（App Router）
+- 言語：TypeScript
+- スタイリング：Tailwind CSS
+- データ永続化：なし（クライアント側のみ）
 
-- `app/` - Next.js App Routerのページとレイアウト
-  - `page.tsx` - メインページ（TodoListをレンダリングするクライアントコンポーネント）
-  - `layout.tsx` - メタデータを含むルートレイアウト
-  - `globals.css` - Tailwindディレクティブを含むグローバルスタイル
-- `components/` - Reactコンポーネント
-  - `TodoList.tsx` - すべての状態管理を含むメインTODOコンポーネント
+---
 
-### 状態管理
+## 4. プロジェクト構造
 
-すべてのアプリケーション状態は、React hooksを使用して`components/TodoList.tsx`でローカルに管理されています:
+```
+.
+├── app/
+│   ├── page.tsx
+│   ├── layout.tsx
+│   └── globals.css
+├── components/
+│   └── TodoList.tsx
+├── public/
+├── package.json
+└── CLAUDE.md
+```
 
-- `todos` - TODOアイテムの配列
-- `inputValue` - 新しいTODOのテキスト入力
-- `dueDateValue` - 新しいTODOの日付入力（デフォルトは今日から7日後）
-- `sortOrder` - ソート状態: 'none' | 'asc' | 'desc'
-- `showCompleted` - 完了タスクの表示/非表示を切り替えるBoolean値
+---
 
-### Todoデータモデル
+## 5. 状態管理方針
 
-```typescript
+- すべての状態は `components/TodoList.tsx` に集約
+- グローバル状態管理ライブラリは使用しない
+- 永続化なし（リロードで消える前提）
+
+---
+
+## 6. Todo データモデル
+
+```ts
 interface Todo {
-  id: number          // タイムスタンプベースの一意なID
-  text: string        // タスクの説明
-  completed: boolean  // 完了状態
-  dueDate: string     // ISO日付文字列 (YYYY-MM-DD)
+  id: number;
+  text: string;
+  completed: boolean;
+  dueDate: string;
 }
 ```
 
-### 主要機能
+---
 
-1. **期限管理**: 新しいTODOは作成日から7日後がデフォルトの期限
-2. **期限切れ検出**: 期限切れの未完了タスクは赤い背景と警告ラベルで表示
-3. **ソート**: 期限順でソートなし、昇順（早い順）、降順（遅い順）を切り替え可能
-4. **フィルタリング**: 完了タスクの表示/非表示を切り替え可能
-5. **クライアント側のみ**: すべての状態は一時的（永続化/データベースなし）
+## 7. 機能仕様
 
-### スタイリング
+1. 期限管理（作成日 +7 日）
+2. 期限切れ警告表示
+3. 期限順ソート（なし / 昇順 / 降順）
+4. 完了タスク表示切替
+5. クライアント限定
 
-- Tailwind CSSユーティリティクラスのみを使用
-- max-widthコンテナを使用したレスポンシブデザイン
-- メインページにグラデーション背景
-- 期限切れタスク（赤背景）と完了タスク（取り消し線）の条件付きスタイリング
+---
+
+## 8. スタイリング方針
+
+- Tailwind CSS のみ使用
+- 条件付きスタイルは JSX 内で明示
+
+---
+
+## 9. テスト実装ルール
+
+- 実挙動を検証
+- 無意味なアサーション禁止
+- 境界値テスト必須
+
+---
+
+## 10. 禁止事項
+
+- 状態管理ライブラリ追加
+- 永続化
+- 無断 npm install
+- 責務不明確な分割
+
+---
+
+## 11. 変更時の必須提示物
+
+- 変更ファイル一覧
+- 変更理由
+- 影響範囲
+- テスト結果
+
+---
+
+## 12. 優先順位
+
+1. ~/.claude/CLAUDE.me
+2. 本ファイル
+3. 既存コード
